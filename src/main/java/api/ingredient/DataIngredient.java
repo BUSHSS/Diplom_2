@@ -1,9 +1,18 @@
-public class Data {
+package api.ingredient;
 
-    private  String _id;
-    private  String name;
-    private  String type;
-    private  int proteins;
+import api.model.JsonIngredients;
+import io.qameta.allure.Step;
+
+import java.util.List;
+
+import static io.restassured.RestAssured.given;
+
+public class DataIngredient {
+    private static final String INGREDIENT_GET_ENDPOINT = "/api/ingredients";
+    private String _id;
+    private String name;
+    private String type;
+    private int proteins;
     private int fat;
     private int carbohydrates;
     private int calories;
@@ -107,6 +116,32 @@ public class Data {
 
     public void set__v(int __v) {
         this.__v = __v;
+    }
+
+
+    @Step("Шаг: Получить список ингредиентов")
+    public JsonIngredients getIngredients() {
+        JsonIngredients jsonIngredients = given()
+                .header("Content-type", "application/json")
+                .get(INGREDIENT_GET_ENDPOINT)
+                .body().as(JsonIngredients.class);
+        return jsonIngredients;
+    }
+
+    @Step("Шаг: Получить ингредиент из списка и сформировать json для передачи в заказ")
+    public String saveIdIngredient(JsonIngredients jsonIngredients, Boolean isIngredient, Integer expectedResult) {
+        List<DataIngredient> s = jsonIngredients.getData();
+        DataIngredient dataIngredient = s.get(0);
+        String idIngredient = dataIngredient.get_id();
+        String OrderJson;
+        if (!isIngredient) {
+            OrderJson = "{\"ingredients\" : []}";
+        } else if (expectedResult == 500) {
+            OrderJson = "{\"ingredients\" : [\"" + idIngredient + "123" + "\"]}";
+        } else {
+            OrderJson = "{\"ingredients\" : [\"" + idIngredient + "\"]}";
+        }
+        return OrderJson;
     }
 
 

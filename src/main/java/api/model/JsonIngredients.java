@@ -1,8 +1,13 @@
+package api.model;
+
+import api.ingredient.DataIngredient;
+
 import java.util.List;
 
+
 public class JsonIngredients {
-    private  Boolean success;
-    private  List <Data> data;
+    private Boolean success;
+    private List<DataIngredient> data;
 
     public Boolean getSuccess() {
         return success;
@@ -12,14 +17,13 @@ public class JsonIngredients {
         this.success = success;
     }
 
-    public List<Data> getData() {
+    public List<DataIngredient> getData() {
         return data;
     }
 
-    public void setData(List<Data> data) {
+    public void setData(List<DataIngredient> data) {
         this.data = data;
     }
-
 
 
 }
