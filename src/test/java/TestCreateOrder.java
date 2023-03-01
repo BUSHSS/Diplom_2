@@ -4,6 +4,7 @@ import api.user.DataCreateUser;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ public class TestCreateOrder {
     private final String expectedMessage;
     private String accessToken;
     private Response orderResponse;
+    DataCreateUser dataCreateUser;
     public TestCreateOrder(Boolean token, Boolean isIngredient, Integer expectedResult, String expectedMessage) {
         this.token = token;
         this.isIngredient = isIngredient;
@@ -47,14 +49,12 @@ public class TestCreateOrder {
     @Before
     public void setUp() {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
-
     }
 
     @Test
     @DisplayName("Создание задания /api/orders")
     public void сreateOrder() {
-
-        DataCreateUser dataCreateUser = new DataCreateUser(emailUser, passwordUser, nameUser);
+        dataCreateUser = new DataCreateUser(emailUser, passwordUser, nameUser);
         Response response = dataCreateUser.sendPostRegister(dataCreateUser);
         accessToken = dataCreateUser.saveAccessToken(response);
         String OrderJson = dataIngredient.saveIdIngredient(dataIngredient.getIngredients(), isIngredient, expectedResult);
@@ -65,11 +65,13 @@ public class TestCreateOrder {
             dataCreateUser.compareStatusCode(orderResponse, expectedResult);
             dataCreateUser.compareMessage(orderResponse, expectedMessage);
         }
-
-        dataCreateUser.deleteData(accessToken);
     }
 
-
+    @After
+    public void out()
+    {
+        dataCreateUser.deleteData(accessToken);
+    }
 }
 
 

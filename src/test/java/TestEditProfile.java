@@ -2,6 +2,7 @@ import api.user.DataCreateUser;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ public class TestEditProfile {
     private final String expectedMessage;
     private final Boolean token;
     private Response responseChange;
+    DataCreateUser dataCreateUser;
     public TestEditProfile(Boolean token, String email, String password, String name, Integer expectedResult, String expectedMessage) {
         this.token = token;
         this.email = email;
@@ -52,17 +54,18 @@ public class TestEditProfile {
     @Test
     @DisplayName("Проверка редактирования полей профиля /api/auth/user")
     public void editProfile() {
-
-        DataCreateUser dataCreateUser = new DataCreateUser(emailUser, passwordUser, nameUser);
+        dataCreateUser = new DataCreateUser(emailUser, passwordUser, nameUser);
         Response response = dataCreateUser.sendPostRegister(dataCreateUser);
         accessToken = dataCreateUser.saveAccessToken(response);
         DataCreateUser changeDataUser = new DataCreateUser(email, password, name);
         responseChange = (token) ? changeDataUser.editUser(accessToken, changeDataUser) : changeDataUser.editUserWithoutToken(changeDataUser);
         changeDataUser.compareStatusCode(responseChange, expectedResult);
         changeDataUser.compareMessage(responseChange, expectedMessage);
-        dataCreateUser.deleteData(accessToken);
-
     }
-
+    @After
+    public void out()
+    {
+        dataCreateUser.deleteData(accessToken);
+    }
 }
 
